@@ -9,7 +9,7 @@
         by_name = Dict(v.name => v for v in vars)
 
         @test haskey(by_name, "answer")
-        @test by_name["answer"].type == "Int64"
+        @test by_name["answer"].type == "$Int"
         @test by_name["answer"].value == "42"
         @test haskey(by_name, "greeting")
         # Modules are excluded unless asked for.

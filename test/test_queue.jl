@@ -12,7 +12,7 @@
         # Each request observes every earlier one, which is only possible if they never
         # overlapped and ran in submission order.
         @test [parse(Int, r.inline) for r in results] == 1:5
-        @test evaluate(ctrl, sid, "order").inline == "5-element Vector{Int64}: 1 2 3 4 5"
+        @test evaluate(ctrl, sid, "order").inline == "5-element Vector{$Int}: 1 2 3 4 5"
     end
 end
 

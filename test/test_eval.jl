@@ -6,7 +6,7 @@
 
         @test r.status === :success
         @test r.inline == "2"
-        @test r.result_type == "Int64"
+        @test r.result_type == "$Int"
         @test r.elapsed >= 0
         @test r.stack_frames === nothing
     end
