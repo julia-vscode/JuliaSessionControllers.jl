@@ -294,6 +294,10 @@ function start(reactor_channel, ss::SessionState, error_handler_file, crash_repo
                             sprint(showerror, SessionProcessCrashException(
                                 session_id, jl_process.exitcode, jl_process.termsignal, captured)),
                         ))
+                    elseif err isa JSONRPC.TransportError
+                        # Expected whenever the process exits: it closes the socket while we
+                        # are still blocked reading from it.
+                        @debug "Session process connection closed" session_id exception = (err,)
                     elseif !(err isa CancellationTokens.OperationCanceledException)
                         @error "Error in session process IO" session_id exception = (err, catch_backtrace())
                         try kill(jl_process) catch end
