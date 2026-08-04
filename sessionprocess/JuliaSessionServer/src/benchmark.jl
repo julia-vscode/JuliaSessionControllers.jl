@@ -33,7 +33,7 @@ function benchmark_request(params::Protocol.BenchmarkParams, state::SessionServe
     filename = isempty(params.filename) ? "session" : params.filename
 
     outcome = run_on_backend(request_id=params.requestId) do
-        expr = Meta.parseall(params.code, filename=filename)
+        expr = parse_toplevel(params.code, filename)
         params.line > 1 && offset_line_numbers!(expr, params.line - 1)
 
         # Build the `@benchmarkable` call by hand rather than through `@benchmark`, so that

@@ -4,6 +4,14 @@ else
     apply_softscope(ex) = ex
 end
 
+# `Meta.parseall` only exists on Julia 1.6+; `Base.parse_input_line` is what the REPL has
+# always used and returns the same `:toplevel` expression.
+@static if isdefined(Meta, :parseall)
+    parse_toplevel(code, filename) = Meta.parseall(code, filename=filename)
+else
+    parse_toplevel(code, filename) = Base.parse_input_line(code, filename=filename)
+end
+
 """Shift every `LineNumberNode` in `x` so the code appears to start at its real line."""
 function offset_line_numbers!(x, offset::Int)
     x isa Expr || return x
@@ -34,7 +42,11 @@ function toplevel_to_block(expr)
 end
 
 """Evaluate every top-level statement in order and return the value of the last one."""
-function eval_toplevel(mod::Module, expr, softscope::Bool)    if expr isa Expr && expr.head === :toplevel
+function eval_toplevel(mod::Module, expr, softscope::Bool)
+    # `parse_input_line` returns `nothing` for input that holds no expressions at all.
+    expr === nothing && return nothing
+
+    if expr isa Expr && expr.head === :toplevel
         result = nothing
         lnn = nothing
         for a in expr.args
@@ -55,7 +67,7 @@ function eval_request(params::Protocol.EvalParams, state::SessionServerState, to
     started = time()
 
     outcome = run_on_backend(request_id=params.requestId) do
-        expr = Meta.parseall(params.code, filename=filename)
+        expr = parse_toplevel(params.code, filename)
         params.line > 1 && offset_line_numbers!(expr, params.line - 1)
         value = eval_toplevel(mod, expr, params.softscope)
         # Mirror the REPL so follow-up code can refer to the previous result.

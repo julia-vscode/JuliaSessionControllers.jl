@@ -214,9 +214,9 @@ const shutdown_request_type = RequestType("session/shutdown", Nothing, Nothing)
 # throws into the separate task running user code.
 const interrupt_notification_type = NotificationType("session/interrupt", Nothing)
 
-# Session process → controller
-const ready_notification_type = NotificationType("session/ready", @NamedTuple{juliaVersion::String})
-const request_started_notification_type = NotificationType("session/requestStarted", @NamedTuple{requestId::String})
-const debugger_ready_notification_type = NotificationType("session/debuggerReady", @NamedTuple{debugPipeName::String})
+# Session process → controller.
+# Spelled out rather than written with `@NamedTuple`, which only exists on Julia 1.5+.
+const ready_notification_type = NotificationType("session/ready", NamedTuple{(:juliaVersion,),Tuple{String}})
+const debugger_ready_notification_type = NotificationType("session/debuggerReady", NamedTuple{(:debugPipeName,),Tuple{String}})
 
 end

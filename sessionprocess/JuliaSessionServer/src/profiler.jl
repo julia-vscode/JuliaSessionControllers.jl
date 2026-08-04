@@ -166,7 +166,7 @@ function profile_request(params::Protocol.ProfileParams, state::SessionServerSta
     end
 
     outcome = run_on_backend(request_id=params.requestId) do
-        expr = Meta.parseall(params.code, filename=filename)
+        expr = parse_toplevel(params.code, filename)
         params.line > 1 && offset_line_numbers!(expr, params.line - 1)
 
         if params.kind == "alloc"
