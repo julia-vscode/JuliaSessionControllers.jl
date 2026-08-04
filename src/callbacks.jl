@@ -5,7 +5,7 @@ Callbacks invoked by the controller as sessions and requests progress. All are o
 and default to no-ops; they run on the reactor task, so they must not block.
 
 - `on_session_created(session_id, env)`
-- `on_session_status_changed(session_id, status)` — `status` is a [`status_label`](@ref).
+- `on_session_status_changed(session_id, status)` — a human-readable phase name.
 - `on_session_output(session_id, output)` — output produced outside any request.
 - `on_request_output(session_id, request_id, output)` — output of an in-flight request.
 - `on_request_started(session_id, request_id, kind)`
