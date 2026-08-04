@@ -3,3 +3,7 @@
 Manifest.toml
 *.log
 docs/build
+
+# The session process environments are resolved ahead of time and shipped, so that a
+# session never has to resolve or download anything at launch.
+!sessionprocess/environments/*/Manifest.toml

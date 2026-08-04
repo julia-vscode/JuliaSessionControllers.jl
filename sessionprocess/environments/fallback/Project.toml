@@ -1,0 +1,15 @@
+[deps]
+BenchmarkTools = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
+Compat = "34da2185-b29b-5c13-b0c7-acf172513d20"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+JuliaSessionServer = "0e2b7b1a-6c34-4f1e-9d3e-2b8a5f7c4d61"
+PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
+Preferences = "21216c6a-2e73-6563-6e65-726566657250"
+
+[sources]
+BenchmarkTools = {path = "../../../packages/BenchmarkTools"}
+Compat = {path = "../../../packages/Compat"}
+JSON = {path = "../../../packages/JSON"}
+JuliaSessionServer = {path = "../../JuliaSessionServer"}
+PrecompileTools = {path = "../../../packages/PrecompileTools"}
+Preferences = {path = "../../../packages/Preferences"}
