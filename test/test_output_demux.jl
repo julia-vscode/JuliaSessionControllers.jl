@@ -1,5 +1,5 @@
 @testitem "demux splits session output from request output" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
 
     d = OutputDemux()
     segments = demux!(d, "before" * OUTPUT_BEGIN_MARKER * "req-1\"inside" * OUTPUT_END_MARKER * "after")
@@ -10,7 +10,7 @@
 end
 
 @testitem "demux carries state across chunk boundaries" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
 
     full = "a" * OUTPUT_BEGIN_MARKER * "req-7\"body" * OUTPUT_END_MARKER * "z"
 
@@ -34,7 +34,7 @@ end
 end
 
 @testitem "demux holds back a partial marker instead of emitting it" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER
 
     d = OutputDemux()
     half = SubString(OUTPUT_BEGIN_MARKER, 1, 8)
@@ -47,7 +47,7 @@ end
 end
 
 @testitem "demux waits for the request id terminator" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER
 
     d = OutputDemux()
     # The marker is complete but the id has not been terminated by `"` yet.
@@ -56,7 +56,7 @@ end
 end
 
 @testitem "demux swallows a stray end marker" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_END_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_END_MARKER
 
     # An interrupt can land between starting a request and writing its begin marker, which
     # leaves an unmatched end marker. It must not reach the caller as literal text.
@@ -65,7 +65,7 @@ end
 end
 
 @testitem "demux preserves multi-byte characters" begin
-    using JuliaSessionsControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
+    using JuliaSessionControllers: OutputDemux, demux!, OUTPUT_BEGIN_MARKER, OUTPUT_END_MARKER
 
     d = OutputDemux()
     text = "αβγ ∑ 🎉"
@@ -74,7 +74,7 @@ end
 end
 
 @testitem "match_marker distinguishes full, partial and absent matches" begin
-    using JuliaSessionsControllers: match_marker
+    using JuliaSessionControllers: match_marker
 
     @test match_marker("abcdef", 1, "abc") === :full
     @test match_marker("abcdef", 4, "def") === :full

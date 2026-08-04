@@ -44,7 +44,7 @@ end
 
 @testitem "a session does not inherit the controller's environment" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: build_process_env
+    using JuliaSessionControllers: build_process_env
 
     withenv("JULIA_PROJECT" => "/somewhere/of/the/hosts/own",
         "JULIA_LOAD_PATH" => "/only/this") do
@@ -61,7 +61,7 @@ end
 
 @testitem "user code sees its own project, not the server's" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     pkg = joinpath(SessionHelpers.TESTDATA_DIR, "BasicPkg")
     env = SessionEnvironment(project_uri=filepath2uri(pkg), package_name="BasicPkg")

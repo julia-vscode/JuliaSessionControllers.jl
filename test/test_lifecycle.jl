@@ -59,7 +59,7 @@ end
 
 @testitem "a session created for a package activates its project" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     pkg = joinpath(SessionHelpers.TESTDATA_DIR, "BasicPkg")
     env = SessionEnvironment(project_uri=filepath2uri(pkg), package_name="BasicPkg")
@@ -75,7 +75,7 @@ end
 
 @testitem "a broken project fails session creation" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     broken = joinpath(SessionHelpers.TESTDATA_DIR, "BrokenPkg")
     env = SessionEnvironment(project_uri=filepath2uri(broken), package_name="BrokenPkg")
@@ -100,7 +100,7 @@ end
     using .SessionHelpers
 
     terminated = String[]
-    ctrl = JuliaSessionsController(ControllerCallbacks(
+    ctrl = JuliaSessionController(ControllerCallbacks(
         on_session_terminated=sid -> push!(terminated, sid)))
     task = @async run(ctrl)
 
@@ -117,7 +117,7 @@ end
 @testitem "shutting down an idle controller completes immediately" setup=[SessionHelpers] begin
     using .SessionHelpers
 
-    ctrl = JuliaSessionsController()
+    ctrl = JuliaSessionController()
     task = @async run(ctrl)
 
     shutdown(ctrl)

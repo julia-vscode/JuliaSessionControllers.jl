@@ -12,7 +12,7 @@ before giving up and failing the request without exit details.
 const TRANSPORT_ERROR_GRACE_SECONDS = 10.0
 
 """
-    JuliaSessionsController(callbacks; kwargs...)
+    JuliaSessionController(callbacks; kwargs...)
 
 Manages Julia child processes in which arbitrary code can be evaluated.
 
@@ -27,7 +27,7 @@ then create sessions and submit requests against them.
 
 # Lifecycle
 
-1. `ctrl = JuliaSessionsController(callbacks)`
+1. `ctrl = JuliaSessionController(callbacks)`
 2. `t = @async run(ctrl)`
 3. `sid = create_session(ctrl, SessionEnvironment(; project_uri=...))`
 4. `evaluate(ctrl, sid, "1 + 1")`
@@ -36,7 +36,7 @@ then create sessions and submit requests against them.
 Sessions are never restarted. If a session dies, create a new one with the same
 [`SessionEnvironment`](@ref).
 """
-mutable struct JuliaSessionsController{CB<:ControllerCallbacks}
+mutable struct JuliaSessionController{CB<:ControllerCallbacks}
     callbacks::CB
     reactor_channel::Channel{ReactorMessage}
     sessions::Dict{String,SessionState}
@@ -45,7 +45,7 @@ mutable struct JuliaSessionsController{CB<:ControllerCallbacks}
     log_level::Symbol
     controller_fsm::FSM{ControllerPhase}
 
-    function JuliaSessionsController(
+    function JuliaSessionController(
         callbacks::CB;
         error_handler_file=nothing,
         crash_reporting_pipename=nothing,
@@ -63,13 +63,13 @@ mutable struct JuliaSessionsController{CB<:ControllerCallbacks}
     end
 end
 
-JuliaSessionsController(; kwargs...) = JuliaSessionsController(ControllerCallbacks(); kwargs...)
+JuliaSessionController(; kwargs...) = JuliaSessionController(ControllerCallbacks(); kwargs...)
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Reactor event loop
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function Base.run(controller::JuliaSessionsController)
+function Base.run(controller::JuliaSessionController)
     while true
         msg = take!(controller.reactor_channel)
         @debug "Reactor msg" msg_type = typeof(msg).name.name
@@ -88,11 +88,11 @@ end
 # Helpers
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function _lookup(c::JuliaSessionsController, session_id::String)
+function _lookup(c::JuliaSessionController, session_id::String)
     return get(c.sessions, session_id, nothing)
 end
 
-function _transition!(c::JuliaSessionsController, ss::SessionState, phase::SessionPhase; reason=nothing)
+function _transition!(c::JuliaSessionController, ss::SessionState, phase::SessionPhase; reason=nothing)
     state(ss.fsm) === phase && return
     transition!(ss.fsm, phase; reason=reason)
     put!(c.reactor_channel, SessionStatusChangedMsg(ss.id, status_label(phase)))
@@ -126,7 +126,7 @@ function _disarm_timers!(ss::SessionState)
     return nothing
 end
 
-function _launch_session!(c::JuliaSessionsController, ss::SessionState)
+function _launch_session!(c::JuliaSessionController, ss::SessionState)
     _transition!(c, ss, SessionStarting; reason="launching")
     token = CancellationTokens.get_token(ss.cs)
 
@@ -146,7 +146,7 @@ end
 """
 Ask the session process to exit, and arm a timer that kills it if it does not.
 """
-function _terminate_session!(c::JuliaSessionsController, ss::SessionState)
+function _terminate_session!(c::JuliaSessionController, ss::SessionState)
     ss.terminate_requested && return
     ss.terminate_requested = true
 
@@ -173,7 +173,7 @@ end
 Start the next queued request if the session is idle. Requests never overlap: this is the
 only place a request is handed to the session process.
 """
-function _pump_queue!(c::JuliaSessionsController, ss::SessionState)
+function _pump_queue!(c::JuliaSessionController, ss::SessionState)
     ss.current_request === nothing || return
     state(ss.fsm) === SessionIdle || return
     isempty(ss.request_queue) && return
@@ -214,7 +214,7 @@ function _pump_queue!(c::JuliaSessionsController, ss::SessionState)
     return nothing
 end
 
-function _finish_current_request!(c::JuliaSessionsController, ss::SessionState, value)
+function _finish_current_request!(c::JuliaSessionController, ss::SessionState, value)
     req = ss.current_request
     req === nothing && return
 
@@ -231,7 +231,7 @@ function _finish_current_request!(c::JuliaSessionsController, ss::SessionState, 
     return nothing
 end
 
-function _arm_interrupt_timer!(c::JuliaSessionsController, ss::SessionState, step::Int, delay::Float64)
+function _arm_interrupt_timer!(c::JuliaSessionController, ss::SessionState, step::Int, delay::Float64)
     ss.interrupt_step = step
     ss.interrupt_timer = Timer(delay) do _
         try put!(c.reactor_channel, InterruptEscalationMsg(ss.id, step)) catch end
@@ -243,7 +243,7 @@ end
 # Handlers
 # ═══════════════════════════════════════════════════════════════════════════════
 
-function handle!(c::JuliaSessionsController, ::ShutdownMsg)
+function handle!(c::JuliaSessionController, ::ShutdownMsg)
     state(c.controller_fsm) === ControllerRunning || return false
 
     @info "Shutting down controller" session_count = length(c.sessions)
@@ -261,7 +261,7 @@ function handle!(c::JuliaSessionsController, ::ShutdownMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::CreateSessionMsg)
+function handle!(c::JuliaSessionController, msg::CreateSessionMsg)
     if state(c.controller_fsm) !== ControllerRunning
         try put!(msg.completion, SessionStartupFailedException(msg.session_id, "Controller is shutting down.")) catch end
         return false
@@ -283,7 +283,7 @@ function handle!(c::JuliaSessionsController, msg::CreateSessionMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionLaunchedMsg)
+function handle!(c::JuliaSessionController, msg::SessionLaunchedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -292,7 +292,7 @@ function handle!(c::JuliaSessionsController, msg::SessionLaunchedMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionReadyMsg)
+function handle!(c::JuliaSessionController, msg::SessionReadyMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -331,7 +331,7 @@ function handle!(c::JuliaSessionsController, msg::SessionReadyMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionActivatedMsg)
+function handle!(c::JuliaSessionController, msg::SessionActivatedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -342,7 +342,7 @@ function handle!(c::JuliaSessionsController, msg::SessionActivatedMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::ActivationFailedMsg)
+function handle!(c::JuliaSessionController, msg::ActivationFailedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -352,7 +352,7 @@ function handle!(c::JuliaSessionsController, msg::ActivationFailedMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionStartupFailedMsg)
+function handle!(c::JuliaSessionController, msg::SessionStartupFailedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -361,7 +361,7 @@ function handle!(c::JuliaSessionsController, msg::SessionStartupFailedMsg)
 end
 
 """Hand `value` to the `create_session` call still blocked on this session, if any."""
-function _finish_startup!(c::JuliaSessionsController, ss::SessionState, value)
+function _finish_startup!(c::JuliaSessionController, ss::SessionState, value)
     completion = ss.startup_completion
     completion === nothing && return
     ss.startup_completion = nothing
@@ -369,31 +369,31 @@ function _finish_startup!(c::JuliaSessionsController, ss::SessionState, value)
     return nothing
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionStatusChangedMsg)
+function handle!(c::JuliaSessionController, msg::SessionStatusChangedMsg)
     safe_callback(c.callbacks.on_session_status_changed, msg.session_id, msg.status)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionOutputMsg)
+function handle!(c::JuliaSessionController, msg::SessionOutputMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing || record_output!(ss, msg.output)
     safe_callback(c.callbacks.on_session_output, msg.session_id, msg.output)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::RequestOutputMsg)
+function handle!(c::JuliaSessionController, msg::RequestOutputMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing || record_output!(ss, msg.output)
     safe_callback(c.callbacks.on_request_output, msg.session_id, msg.request_id, msg.output)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::AttachDebuggerMsg)
+function handle!(c::JuliaSessionController, msg::AttachDebuggerMsg)
     safe_callback(c.callbacks.on_attach_debugger, msg.session_id, msg.debug_pipe_name)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SubmitRequestMsg)
+function handle!(c::JuliaSessionController, msg::SubmitRequestMsg)
     ss = _lookup(c, msg.session_id)
     if ss === nothing
         complete_request!(msg.request, SessionNotFoundException(msg.session_id))
@@ -422,7 +422,7 @@ function handle!(c::JuliaSessionsController, msg::SubmitRequestMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::RequestCompletedMsg)
+function handle!(c::JuliaSessionController, msg::RequestCompletedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -458,7 +458,7 @@ function handle!(c::JuliaSessionsController, msg::RequestCompletedMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::RequestTimeoutMsg)
+function handle!(c::JuliaSessionController, msg::RequestTimeoutMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -471,7 +471,7 @@ function handle!(c::JuliaSessionsController, msg::RequestTimeoutMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::CancelRequestMsg)
+function handle!(c::JuliaSessionController, msg::CancelRequestMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -491,7 +491,7 @@ function handle!(c::JuliaSessionsController, msg::CancelRequestMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::InterruptSessionMsg)
+function handle!(c::JuliaSessionController, msg::InterruptSessionMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
     state(ss.fsm) === SessionDead && return false
@@ -511,7 +511,7 @@ Start the interrupt escalation ladder against whatever the session is currently 
 The caller-facing result may already have been delivered (on timeout or cancellation); this
 only concerns getting the session process back to a usable state.
 """
-function _begin_interrupt!(c::JuliaSessionsController, ss::SessionState)
+function _begin_interrupt!(c::JuliaSessionController, ss::SessionState)
     ss.current_request === nothing && return
     state(ss.fsm) === SessionInterrupting && return
 
@@ -530,7 +530,7 @@ function _begin_interrupt!(c::JuliaSessionsController, ss::SessionState)
     return nothing
 end
 
-function handle!(c::JuliaSessionsController, msg::InterruptEscalationMsg)
+function handle!(c::JuliaSessionController, msg::InterruptEscalationMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
     state(ss.fsm) === SessionInterrupting || return false
@@ -552,7 +552,7 @@ function handle!(c::JuliaSessionsController, msg::InterruptEscalationMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::TerminateSessionMsg)
+function handle!(c::JuliaSessionController, msg::TerminateSessionMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -567,7 +567,7 @@ function handle!(c::JuliaSessionsController, msg::TerminateSessionMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::SessionTerminatedMsg)
+function handle!(c::JuliaSessionController, msg::SessionTerminatedMsg)
     ss = _lookup(c, msg.session_id)
     ss === nothing && return false
 
@@ -605,7 +605,7 @@ function handle!(c::JuliaSessionsController, msg::SessionTerminatedMsg)
     return false
 end
 
-function handle!(c::JuliaSessionsController, msg::ListSessionsMsg)
+function handle!(c::JuliaSessionController, msg::ListSessionsMsg)
     infos = SessionInfo[SessionInfo(ss) for ss in values(c.sessions)]
     sort!(infos, by=i -> i.id)
     try put!(msg.completion, infos) catch end
@@ -626,7 +626,7 @@ Throws [`SessionStartupFailedException`](@ref) if the process could not be start
 environment could not be activated.
 """
 function create_session(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     env::SessionEnvironment;
     token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
 )
@@ -648,7 +648,7 @@ Ask a session to shut down and forget it. Any queued or in-flight requests fail 
 There is no restart: to get a fresh session, call [`create_session`](@ref) again with the
 same [`SessionEnvironment`](@ref).
 """
-function terminate_session(c::JuliaSessionsController, session_id::AbstractString)
+function terminate_session(c::JuliaSessionController, session_id::AbstractString)
     put!(c.reactor_channel, TerminateSessionMsg(String(session_id)))
     return nothing
 end
@@ -659,7 +659,7 @@ end
 Interrupt whatever the session is currently running and drop everything queued behind it.
 Returns immediately; the interrupted request fails on its own completion path.
 """
-function interrupt_session(c::JuliaSessionsController, session_id::AbstractString)
+function interrupt_session(c::JuliaSessionController, session_id::AbstractString)
     put!(c.reactor_channel, InterruptSessionMsg(String(session_id)))
     return nothing
 end
@@ -670,7 +670,7 @@ end
 Snapshot of every session the controller knows about, including ones that have died but
 not yet been terminated.
 """
-function list_sessions(c::JuliaSessionsController)
+function list_sessions(c::JuliaSessionController)
     completion = Channel{Any}(1)
     put!(c.reactor_channel, ListSessionsMsg(completion))
     return take!(completion)::Vector{SessionInfo}
@@ -682,7 +682,7 @@ end
 Request an orderly shutdown: all sessions are terminated, pending requests fail, and the
 reactor loop exits. Returns immediately; use [`wait_for_shutdown`](@ref) to block.
 """
-function shutdown(c::JuliaSessionsController)
+function shutdown(c::JuliaSessionController)
     @info "Queueing controller shutdown"
     put!(c.reactor_channel, ShutdownMsg())
     return nothing
@@ -693,7 +693,7 @@ end
 
 Block until the reactor loop has exited and every session's IO task has finished.
 """
-function wait_for_shutdown(c::JuliaSessionsController, reactor_task::Task)
+function wait_for_shutdown(c::JuliaSessionController, reactor_task::Task)
     try wait(reactor_task) catch end
     for ss in values(c.sessions)
         for t in ss.process_tasks
@@ -706,7 +706,7 @@ end
 """
 Submit `request` to a session and block until it completes, rethrowing any failure.
 """
-function _submit(c::JuliaSessionsController, session_id::AbstractString, request::PendingRequest)
+function _submit(c::JuliaSessionController, session_id::AbstractString, request::PendingRequest)
     put!(c.reactor_channel, SubmitRequestMsg(String(session_id), request))
     result = take!(request.completion)
     result isa Exception && throw(result)

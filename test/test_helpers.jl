@@ -1,7 +1,7 @@
 @testmodule SessionHelpers begin
 
-using JuliaSessionsControllers
-const JSC = JuliaSessionsControllers
+using JuliaSessionControllers
+const JSC = JuliaSessionControllers
 
 const TESTDATA_DIR = normpath(joinpath(@__DIR__, "..", "testdata"))
 
@@ -10,7 +10,7 @@ Run `f(controller)` against a live controller, shutting it down afterwards whate
 happens. Callback keyword arguments are forwarded to `ControllerCallbacks`.
 """
 function with_controller(f; kwargs...)
-    controller = JuliaSessionsController(ControllerCallbacks(; kwargs...))
+    controller = JuliaSessionController(ControllerCallbacks(; kwargs...))
     task = @async run(controller)
     try
         return f(controller)

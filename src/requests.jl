@@ -68,7 +68,7 @@ problems with the session itself.
   call; one is generated when omitted.
 """
 function evaluate(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString,
     code::AbstractString;
     filename::AbstractString="",
@@ -109,7 +109,7 @@ Run `Revise.revise()` in the session so that edits made on disk take effect. Ret
 when the revision succeeded; a failed revision returns `false` and usually means the
 session should be replaced.
 """
-function revise!(c::JuliaSessionsController, session_id::AbstractString;
+function revise!(c::JuliaSessionController, session_id::AbstractString;
     timeout::Union{Nothing,Real}=nothing,
     token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
 )
@@ -131,7 +131,7 @@ Activate a different environment in a live session. Returns the path of the newl
 project. Throws if activation fails, leaving the session on its previous environment.
 """
 function activate_env(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString;
     project_uri::Union{Nothing,AbstractString}=nothing,
     package_uri::Union{Nothing,AbstractString}=nothing,
@@ -174,7 +174,7 @@ Allocation profiling requires Julia 1.8 or newer; on older versions the result c
 with `status === :unsupported`.
 """
 function profile(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString,
     code::AbstractString;
     kind::Symbol=:cpu,
@@ -219,7 +219,7 @@ List the bindings of a module in the session. Values that are expensive to rende
 reported with `lazy = true`; expand them with [`get_lazy`](@ref).
 """
 function get_variables(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString;
     mod::AbstractString="Main",
     include_modules::Bool=false,
@@ -244,7 +244,7 @@ end
 Expand the children of a lazily reported [`WorkspaceVariable`](@ref).
 """
 function get_lazy(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString,
     id::Integer;
     timeout::Union{Nothing,Real}=nothing,
@@ -269,7 +269,7 @@ Completion candidates for the partial expression `line`, as the session's REPL w
 them.
 """
 function get_completions(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString,
     line::AbstractString;
     mod::AbstractString="Main",
@@ -294,7 +294,7 @@ end
 Names of the modules currently loaded in the session.
 """
 function get_modules(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString;
     timeout::Union{Nothing,Real}=nothing,
     token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
@@ -318,7 +318,7 @@ DAP client should connect to. The session stays in the debugging state until the
 disconnects.
 """
 function start_debug_session(
-    c::JuliaSessionsController,
+    c::JuliaSessionController,
     session_id::AbstractString;
     stop_on_entry::Bool=false,
     timeout::Union{Nothing,Real}=nothing,

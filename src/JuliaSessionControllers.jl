@@ -1,4 +1,4 @@
-module JuliaSessionsControllers
+module JuliaSessionControllers
 
 import Sockets, UUIDs, Dates
 
@@ -14,7 +14,7 @@ module JSONRPC
     include("../packages/JSONRPC/src/packagedef.jl")
 end
 
-export JuliaSessionsController
+export JuliaSessionController
 export SessionEnvironment, ControllerCallbacks
 export SessionInfo, EvalResult, ProfileResult, ProfileFrame
 export WorkspaceVariable, CompletionItem, StackFrame
@@ -37,7 +37,7 @@ include("state.jl")
 include("messages.jl")
 include("callbacks.jl")
 include("sessionprocess.jl")
-include("juliasessionscontroller.jl")
+include("juliasessioncontroller.jl")
 include("requests.jl")
 
-end # module JuliaSessionsControllers
+end # module JuliaSessionControllers

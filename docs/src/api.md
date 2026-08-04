@@ -3,7 +3,7 @@
 ## Controller
 
 ```@docs
-JuliaSessionsController
+JuliaSessionController
 ControllerCallbacks
 shutdown
 wait_for_shutdown

@@ -1,4 +1,4 @@
-# JuliaSessionsControllers.jl
+# JuliaSessionControllers.jl
 
 Manages long-lived Julia child processes ("sessions") in which arbitrary code can be
 evaluated, and exposes them through an in-process Julia API.
@@ -11,9 +11,9 @@ demultiplexes their output, and handles the process lifecycle.
 ## Getting started
 
 ```julia
-using JuliaSessionsControllers
+using JuliaSessionControllers
 
-controller = JuliaSessionsController()
+controller = JuliaSessionController()
 reactor = @async run(controller)
 
 session = create_session(controller, SessionEnvironment())

@@ -1,6 +1,6 @@
 @testitem "revise picks up an edit made on disk" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     pkg = SessionHelpers.copy_testdata("BasicPkg")
     source = joinpath(pkg, "src", "BasicPkg.jl")
@@ -28,7 +28,7 @@ end
 
 @testitem "a live session can switch environments" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     pkg = joinpath(SessionHelpers.TESTDATA_DIR, "BasicPkg")
 
@@ -44,7 +44,7 @@ end
 
 @testitem "activating a broken environment throws and leaves the session alive" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: filepath2uri
+    using JuliaSessionControllers: filepath2uri
 
     broken = joinpath(SessionHelpers.TESTDATA_DIR, "BrokenPkg")
 

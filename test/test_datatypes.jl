@@ -28,7 +28,7 @@ end
 end
 
 @testitem "build_process_env applies overrides and removals" begin
-    using JuliaSessionsControllers: build_process_env
+    using JuliaSessionControllers: build_process_env
 
     withenv("JSC_TEST_REMOVE_ME" => "present", "JSC_TEST_KEEP" => "kept") do
         env = SessionEnvironment(julia_env=Dict(
@@ -44,7 +44,7 @@ end
 end
 
 @testitem "an explicit thread count is passed through the environment" begin
-    using JuliaSessionsControllers: build_process_env, build_process_args
+    using JuliaSessionControllers: build_process_env, build_process_args
 
     numeric = SessionEnvironment(julia_num_threads="4")
     @test build_process_env(numeric)["JULIA_NUM_THREADS"] == "4"
@@ -57,7 +57,7 @@ end
 end
 
 @testitem "session processes do not inherit test-runner semantics" begin
-    using JuliaSessionsControllers: build_process_args
+    using JuliaSessionControllers: build_process_args
 
     # User code must run with ordinary semantics, unlike TestItemControllers' processes.
     args = build_process_args(SessionEnvironment(julia_args=["-O2"]))
@@ -76,7 +76,7 @@ end
 end
 
 @testitem "request completion delivers exactly once" begin
-    using JuliaSessionsControllers: PendingRequest, complete_request!, SessionEvaluating
+    using JuliaSessionControllers: PendingRequest, complete_request!, SessionEvaluating
 
     req = PendingRequest(:eval, SessionEvaluating, _ -> nothing)
 

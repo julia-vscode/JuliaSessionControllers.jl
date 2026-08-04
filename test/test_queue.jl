@@ -63,7 +63,7 @@ end
 
 @testitem "cancelling a queued request never reaches the session" setup=[SessionHelpers] begin
     using .SessionHelpers
-    using JuliaSessionsControllers: CancellationTokens
+    using JuliaSessionControllers: CancellationTokens
 
     SessionHelpers.with_session() do ctrl, sid
         evaluate(ctrl, sid, "reached = String[]")

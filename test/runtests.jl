@@ -1,6 +1,6 @@
 using TestItemRunner
 
-ENV["JULIA_DEBUG"] = "JuliaSessionsControllers"
+ENV["JULIA_DEBUG"] = "JuliaSessionControllers"
 
 # The cross-version suite needs every supported Julia installed via juliaup, so it is opt-in.
 const RUN_COMPREHENSIVE = get(ENV, "JSC_COMPREHENSIVE", "false") == "true"

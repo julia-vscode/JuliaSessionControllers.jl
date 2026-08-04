@@ -25,7 +25,7 @@ end
 @testitem "the debug adapter answers an initialize request" setup=[SessionHelpers] tags=[:debugger] begin
     using .SessionHelpers
     using Sockets
-    using JuliaSessionsControllers: JSON
+    using JuliaSessionControllers: JSON
 
     SessionHelpers.with_session() do ctrl, sid
         pipe_name = start_debug_session(ctrl, sid)
