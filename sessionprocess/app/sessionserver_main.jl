@@ -1,20 +1,5 @@
 @info "Julia session process launching"
 
-# Activate the version-specific environment. We use Base.ACTIVE_PROJECT[] (available since
-# Julia 1.0) instead of Pkg.activate, because Pkg may not be available in the default
-# environment on Julia 1.12+ (no implicit Pkg in empty projects). The `let` keeps the
-# launcher from leaving bindings behind in `Main`, which the user's code owns.
-let
-    version_specific_env_path = joinpath(@__DIR__, "../environments", "v$(VERSION.major).$(VERSION.minor)")
-    env_path = isdir(version_specific_env_path) ? version_specific_env_path : joinpath(@__DIR__, "../environments", "fallback")
-    if isdefined(Base, :ACTIVE_PROJECT)
-        Base.ACTIVE_PROJECT[] = env_path
-    else
-        import Pkg
-        Pkg.activate(env_path)
-    end
-end
-
 let
     has_error_handler = false
 
@@ -24,9 +9,28 @@ let
             has_error_handler = true
         end
 
-        using JuliaSessionServer
+        version_specific = joinpath(@__DIR__, "../environments", "v$(VERSION.major).$(VERSION.minor)")
+        env_path = isdir(version_specific) ? version_specific : joinpath(@__DIR__, "../environments", "fallback")
 
-        JuliaSessionServer.serve(
+        set_project = path -> @static if VERSION < v"1.8.0"
+            Base.ACTIVE_PROJECT[] = path
+        else
+            Base.set_active_project(path)
+        end
+
+        # The server loads from its own private environment, but the process is put back on
+        # the environment it started with afterwards — otherwise the user's code would be
+        # stuck in ours, where it cannot even load a stdlib the server did not declare.
+        previous_project = Base.ACTIVE_PROJECT[]
+        server = try
+            set_project(env_path)
+            # `Base.require` rather than `using`, so no binding is left behind in `Main`.
+            Base.require(Main, :JuliaSessionServer)
+        finally
+            set_project(previous_project)
+        end
+
+        server.serve(
             ARGS[1],
             has_error_handler ? (err, bt) -> Base.invokelatest(global_err_handler, err, bt, Base.ARGS[3], "Julia Session") : nothing)
     catch err

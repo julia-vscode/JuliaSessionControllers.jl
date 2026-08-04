@@ -22,7 +22,7 @@ let
             has_error_handler = true
         end
 
-        using JuliaSessionServer
+        Base.require(Main, :JuliaSessionServer)
     catch err
         bt = catch_backtrace()
         if has_error_handler

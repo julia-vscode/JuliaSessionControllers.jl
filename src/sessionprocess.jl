@@ -127,11 +127,12 @@ current one. A `nothing` value removes the variable entirely.
 function build_process_env(env::SessionEnvironment)
     jl_env = copy(ENV)
 
-    # During precompilation Julia restricts JULIA_LOAD_PATH to dependency paths only (no
-    # "@" entry), which would stop the child from resolving its own active project.
-    if ccall(:jl_generating_output, Cint, ()) == 1
-        delete!(jl_env, "JULIA_LOAD_PATH")
-    end
+    # A session must not inherit the environment the *controller* happens to run in, or the
+    # same `SessionEnvironment` would mean different things depending on how the host was
+    # launched. Cleared here so a session with no `project_uri` reliably gets Julia's
+    # default stack (`@:@v#.#:@stdlib`); callers can still set either via `julia_env`.
+    delete!(jl_env, "JULIA_PROJECT")
+    delete!(jl_env, "JULIA_LOAD_PATH")
 
     for (k, v) in pairs(env.julia_env)
         if v !== nothing

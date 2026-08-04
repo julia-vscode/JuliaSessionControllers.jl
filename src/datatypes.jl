@@ -13,6 +13,11 @@ processes — this type is a description, not a pool key.
 - `project_uri` — the project to activate, as a `file://` URI.
 - `package_uri` / `package_name` — the package being developed, when there is one.
 - `use_test_env` — activate the package's test environment via TestEnv.
+
+A session never inherits `JULIA_PROJECT` or `JULIA_LOAD_PATH` from the controller process,
+so the same `SessionEnvironment` means the same thing regardless of how the host was
+launched. With no `project_uri`, a session gets Julia's default environment stack; set
+either variable through `julia_env` to override that deliberately.
 """
 struct SessionEnvironment
     julia_cmd::String
