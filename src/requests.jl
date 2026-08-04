@@ -64,6 +64,8 @@ problems with the session itself.
 - `timeout` — seconds before the session is interrupted and the call fails with
   [`RequestTimeoutException`](@ref).
 - `token` — cancellation token; cancelling interrupts the session.
+- `request_id` — supply your own id to correlate `on_request_output` callbacks with this
+  call; one is generated when omitted.
 """
 function evaluate(
     c::JuliaSessionsController,
@@ -76,8 +78,8 @@ function evaluate(
     softscope::Bool=true,
     timeout::Union{Nothing,Real}=nothing,
     token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
+    request_id::AbstractString=string(UUIDs.uuid4()),
 )
-    request_id = string(UUIDs.uuid4())
     params = Protocol.EvalParams(
         requestId=request_id,
         code=String(code),
@@ -183,10 +185,10 @@ function profile(
     line::Integer=1,
     timeout::Union{Nothing,Real}=nothing,
     token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
+    request_id::AbstractString=string(UUIDs.uuid4()),
 )
     kind in (:cpu, :alloc) || throw(ArgumentError("profile `kind` must be :cpu or :alloc, got :$kind"))
 
-    request_id = string(UUIDs.uuid4())
     params = Protocol.ProfileParams(
         requestId=request_id,
         code=String(code),

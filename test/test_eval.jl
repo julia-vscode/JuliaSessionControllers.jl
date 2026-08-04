@@ -134,6 +134,21 @@ end
     end
 end
 
+@testitem "a caller-supplied request id is used for output attribution" setup=[SessionHelpers] begin
+    using .SessionHelpers
+
+    request_output = Dict{String,Vector{String}}()
+
+    SessionHelpers.with_session(;
+        on_request_output=(sid, rid, out) -> push!(get!(request_output, rid, String[]), out),
+    ) do ctrl, sid
+        evaluate(ctrl, sid, "println(\"mine\")"; request_id="my-own-id")
+
+        @test SessionHelpers.timed_wait(() -> haskey(request_output, "my-own-id"), 10)
+        @test occursin("mine", join(request_output["my-own-id"]))
+    end
+end
+
 @testitem "the line number reported for an error respects the offset" setup=[SessionHelpers] begin
     using .SessionHelpers
 
