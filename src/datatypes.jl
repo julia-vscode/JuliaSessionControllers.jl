@@ -82,27 +82,6 @@ end
 
 iserror(r::EvalResult) = r.status === :error
 
-"""
-    BenchmarkResult
-
-Outcome of [`benchmark`](@ref). `status` is `:success`, `:error`, or `:unsupported` when
-the session's Julia version is too old for the vendored BenchmarkTools. Times are in
-nanoseconds, `memory` in bytes.
-"""
-struct BenchmarkResult
-    status::Symbol
-    error::Union{Nothing,String}
-    min_time::Union{Nothing,Float64}
-    median_time::Union{Nothing,Float64}
-    mean_time::Union{Nothing,Float64}
-    max_time::Union{Nothing,Float64}
-    allocs::Union{Nothing,Int}
-    memory::Union{Nothing,Int}
-    nsamples::Union{Nothing,Int}
-    evals_per_sample::Union{Nothing,Int}
-    summary::Union{Nothing,String}
-end
-
 """A node of a profile tree. `flags` uses the `PROFILE_FLAG_*` constants."""
 struct ProfileFrame
     func::String

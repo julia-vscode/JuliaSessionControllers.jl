@@ -76,35 +76,6 @@ end
     error::Union{Missing,String}
 end
 
-# ── Benchmark ─────────────────────────────────────────────────────────────────
-
-@dict_readable struct BenchmarkParams <: Outbound
-    requestId::String
-    code::String
-    filename::String
-    line::Int
-    mod::String
-    seconds::Union{Missing,Float64}
-    samples::Union{Missing,Int}
-    evals::Union{Missing,Int}
-end
-
-@dict_readable struct BenchmarkResult <: Outbound
-    status::String
-    error::Union{Missing,String}
-    # Times in nanoseconds, memory in bytes.
-    minTime::Union{Missing,Float64}
-    medianTime::Union{Missing,Float64}
-    meanTime::Union{Missing,Float64}
-    maxTime::Union{Missing,Float64}
-    allocs::Union{Missing,Int}
-    memory::Union{Missing,Int}
-    nsamples::Union{Missing,Int}
-    evalsPerSample::Union{Missing,Int}
-    # Pre-rendered `show` output of the trial, which reads better than the raw numbers.
-    summary::Union{Missing,String}
-end
-
 # ── Profiling ─────────────────────────────────────────────────────────────────
 
 # Bit flags matching FlameGraphs/VSCodeServer so the tree can be rendered the same way.
@@ -200,7 +171,6 @@ end
 const activate_env_request_type = RequestType("session/activateEnv", ActivateEnvParams, ActivateEnvResult)
 const revise_request_type = RequestType("session/revise", Nothing, ReviseResult)
 const eval_request_type = RequestType("session/eval", EvalParams, EvalResult)
-const benchmark_request_type = RequestType("session/benchmark", BenchmarkParams, BenchmarkResult)
 const profile_request_type = RequestType("session/profile", ProfileParams, ProfileResult)
 const get_variables_request_type = RequestType("session/getVariables", GetVariablesParams, Vector{WorkspaceItem})
 const get_lazy_request_type = RequestType("session/getLazy", GetLazyParams, Vector{WorkspaceItem})

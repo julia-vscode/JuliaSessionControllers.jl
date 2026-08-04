@@ -3,7 +3,7 @@ module JuliaSessionServer
 include("pkg_imports.jl")
 
 import .CancellationTokens: CancellationToken
-import Pkg, Sockets, REPL, Profile, Logging, Statistics
+import Pkg, Sockets, REPL, Profile, Logging
 const StackTraces = Base.StackTraces
 
 include("../../../shared/sessionserver_protocol.jl")
@@ -27,14 +27,12 @@ include("backend.jl")
 include("eval.jl")
 include("inspect.jl")
 include("profiler.jl")
-include("benchmark.jl")
 include("debugger.jl")
 
 JSONRPC.@message_dispatcher dispatch_msg begin
     Protocol.activate_env_request_type => activate_env_request
     Protocol.revise_request_type => revise_request
     Protocol.eval_request_type => eval_request
-    Protocol.benchmark_request_type => benchmark_request
     Protocol.profile_request_type => profile_request
     Protocol.get_variables_request_type => get_variables_request
     Protocol.get_lazy_request_type => get_lazy_request

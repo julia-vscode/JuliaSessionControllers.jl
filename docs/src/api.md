@@ -25,7 +25,6 @@ list_sessions
 evaluate
 revise!
 activate_env
-benchmark
 profile
 get_variables
 get_lazy
@@ -38,7 +37,6 @@ start_debug_session
 
 ```@docs
 EvalResult
-BenchmarkResult
 ProfileResult
 ProfileFrame
 WorkspaceVariable

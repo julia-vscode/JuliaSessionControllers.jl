@@ -2,7 +2,7 @@
 
 julia_version = "1.8.5"
 manifest_format = "2.0"
-project_hash = "8fc124c8169bd54ce5520bd72a03277b21724a56"
+project_hash = "c3f4983506b721c53da4c41b0efd152d2b4e6dd3"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -13,23 +13,6 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
-
-[[deps.BenchmarkTools]]
-deps = ["Compat", "JSON", "Logging", "PrecompileTools", "Printf", "Profile", "Statistics", "UUIDs"]
-path = "../../../packages/BenchmarkTools"
-uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.8.0"
-
-[[deps.Compat]]
-deps = ["Dates", "LinearAlgebra", "TOML", "UUIDs"]
-path = "../../../packages/Compat"
-uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.18.1"
-
-[[deps.CompilerSupportLibraries_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.1+0"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -51,14 +34,8 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[deps.JSON]]
-deps = ["Dates", "Mmap", "Unicode"]
-path = "../../../packages/JSON"
-uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "0.20.1"
-
 [[deps.JuliaSessionServer]]
-deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "Statistics", "TOML", "UUIDs", "Unicode"]
+deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "TOML", "UUIDs", "Unicode"]
 path = "../../JuliaSessionServer"
 uuid = "0e2b7b1a-6c34-4f1e-9d3e-2b8a5f7c4d61"
 version = "1.0.0"
@@ -85,10 +62,6 @@ version = "1.10.2+0"
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 
-[[deps.LinearAlgebra]]
-deps = ["Libdl", "libblastrampoline_jll"]
-uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 
@@ -112,27 +85,10 @@ version = "2022.2.1"
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.2.0"
 
-[[deps.OpenBLAS_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
-uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.20+0"
-
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 version = "1.8.0"
-
-[[deps.PrecompileTools]]
-deps = ["Preferences"]
-path = "../../../packages/PrecompileTools"
-uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.1"
-
-[[deps.Preferences]]
-deps = ["TOML"]
-path = "../../../packages/Preferences"
-uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.5.2"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -160,14 +116,6 @@ uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
-[[deps.SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
-uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-
-[[deps.Statistics]]
-deps = ["LinearAlgebra", "SparseArrays"]
-uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-
 [[deps.TOML]]
 deps = ["Dates"]
 uuid = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
@@ -189,11 +137,6 @@ uuid = "4ec0a83e-493e-50e2-b9ac-8f72acf5a8f5"
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
 version = "1.2.12+3"
-
-[[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl", "OpenBLAS_jll"]
-uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.1.1+0"
 
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]

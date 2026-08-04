@@ -18,8 +18,8 @@ demultiplexes their output, and handles the messy parts of process lifecycle man
 - **No restart.** A session that dies stays dead. To get a fresh one, terminate it and
   create a new session with the same `SessionEnvironment`.
 - **Vendored dependencies.** Everything the child process needs (Revise, DebugAdapter,
-  BenchmarkTools, JSONRPC, ...) is vendored under `packages/` and loaded into a private
-  environment, so a session never perturbs the user's own project.
+  JSONRPC, ...) is vendored under `packages/` and loaded into a private environment, so a
+  session never perturbs the user's own project.
 
 ## Example
 
@@ -41,9 +41,9 @@ wait_for_shutdown(controller, reactor)
 `evaluate` reports an error in the evaluated code as an `EvalResult` with
 `status === :error`; exceptions are reserved for problems with the session itself.
 
-Alongside `evaluate` there are `revise!`, `activate_env`, `benchmark`, `profile`,
-`get_variables`, `get_lazy`, `get_completions`, `get_modules` and `start_debug_session`,
-plus `interrupt_session`, `terminate_session` and `list_sessions`.
+Alongside `evaluate` there are `revise!`, `activate_env`, `profile`, `get_variables`,
+`get_lazy`, `get_completions`, `get_modules` and `start_debug_session`, plus
+`interrupt_session`, `terminate_session` and `list_sessions`.
 
 ## Interrupting
 
@@ -62,9 +62,8 @@ used on modern Julia and `packages-old/v1.5` and `packages-old/v1.9` the last re
 support those older versions; `sessionprocess/JuliaSessionServer/src/pkg_imports.jl` picks
 between them.
 
-Benchmarking requires Julia 1.6 or newer and allocation profiling Julia 1.8 or newer. Below
-those versions the corresponding request reports `status === :unsupported` rather than
-failing.
+Allocation profiling requires Julia 1.8 or newer; below that the request reports
+`status === :unsupported` rather than failing.
 
 ## Repository scripts
 

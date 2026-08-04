@@ -13,18 +13,14 @@ Only the `packages/` entries are updated by `update_vendored_packages.jl`; the
 `packages-old/` tiers are frozen at the last release supporting their Julia version.
 """
 const CURRENT_SUBTREES = [
-    "packages/BenchmarkTools"     => ("JuliaCI/BenchmarkTools.jl", "v1.8.0"),
     "packages/CancellationTokens" => ("davidanthoff/CancellationTokens.jl", "v2.3.0"),
     "packages/CodeTracking"       => ("timholy/CodeTracking.jl", "v3.0.2"),
-    "packages/Compat"             => ("JuliaLang/Compat.jl", "v4.18.1"),
     "packages/DebugAdapter"       => ("julia-vscode/DebugAdapter.jl", "v3.1.0"),
     "packages/JSON"               => ("JuliaIO/JSON.jl", "v0.20.1"),
     "packages/JSONRPC"            => ("julia-vscode/JSONRPC.jl", "v3.0.1"),
     "packages/JuliaInterpreter"   => ("JuliaDebug/JuliaInterpreter.jl", "v0.10.12"),
     "packages/LoweredCodeUtils"   => ("JuliaDebug/LoweredCodeUtils.jl", "v3.5.1"),
     "packages/OrderedCollections" => ("JuliaCollections/OrderedCollections.jl", "v1.8.1"),
-    # Pinned: PrecompileTools 1.3+ requires Julia 1.12, but session processes run on 1.0+.
-    "packages/PrecompileTools"    => ("JuliaLang/PrecompileTools.jl", "v1.2.1"),
     "packages/Preferences"        => ("JuliaPackaging/Preferences.jl", "v1.5.2"),
     "packages/Revise"             => ("timholy/Revise.jl", "v3.14.4"),
     "packages/TestEnv"            => ("JuliaTesting/TestEnv.jl", "v1.103.6"),
@@ -54,7 +50,6 @@ Packages deliberately excluded from automated updates, with the reason why.
 """
 const UPDATE_EXCLUSIONS = Dict(
     "packages/JSON" => "Newer JSON versions add dependencies we would have to vendor too.",
-    "packages/PrecompileTools" => "Newer versions require Julia 1.12; session processes run on 1.0+.",
 )
 
 git(args...; dir=REPO_ROOT) = run(addenv(Cmd(`git $(collect(args))`, dir=dir), "GIT_MERGE_AUTOEDIT" => "no"))

@@ -9,18 +9,6 @@ uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
 [[Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 
-[[BenchmarkTools]]
-deps = ["Compat", "JSON", "Logging", "PrecompileTools", "Printf", "Profile", "Statistics", "UUIDs"]
-path = "../../../packages/BenchmarkTools"
-uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.8.0"
-
-[[Compat]]
-deps = ["Dates", "LinearAlgebra", "TOML", "UUIDs"]
-path = "../../../packages/Compat"
-uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.18.1"
-
 [[Dates]]
 deps = ["Printf"]
 uuid = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -40,14 +28,8 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 
-[[JSON]]
-deps = ["Dates", "Mmap", "Unicode"]
-path = "../../../packages/JSON"
-uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "0.20.1"
-
 [[JuliaSessionServer]]
-deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "Statistics", "TOML", "UUIDs", "Unicode"]
+deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "TOML", "UUIDs", "Unicode"]
 path = "../../JuliaSessionServer"
 uuid = "0e2b7b1a-6c34-4f1e-9d3e-2b8a5f7c4d61"
 version = "1.0.0"
@@ -70,10 +52,6 @@ uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
 
 [[Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
-
-[[LinearAlgebra]]
-deps = ["Libdl"]
-uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 
 [[Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
@@ -99,18 +77,6 @@ uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 
-[[PrecompileTools]]
-deps = ["Preferences"]
-path = "../../../packages/PrecompileTools"
-uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.1"
-
-[[Preferences]]
-deps = ["TOML"]
-path = "../../../packages/Preferences"
-uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.5.2"
-
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -135,14 +101,6 @@ uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [[Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
-
-[[SparseArrays]]
-deps = ["LinearAlgebra", "Random"]
-uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
-
-[[Statistics]]
-deps = ["LinearAlgebra", "SparseArrays"]
-uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 
 [[TOML]]
 deps = ["Dates"]

@@ -25,7 +25,6 @@ terminal — sessions are never restarted.
     SessionIdle
     SessionEvaluating
     SessionRevising
-    SessionBenchmarking
     SessionProfiling
     SessionInspecting
     SessionDebugging
@@ -37,7 +36,6 @@ end
 const BUSY_PHASES = (
     SessionEvaluating,
     SessionRevising,
-    SessionBenchmarking,
     SessionProfiling,
     SessionInspecting,
     SessionDebugging,
@@ -114,7 +112,6 @@ function status_label(phase::SessionPhase)
     phase === SessionIdle && return "Idle"
     phase === SessionEvaluating && return "Evaluating"
     phase === SessionRevising && return "Revising"
-    phase === SessionBenchmarking && return "Benchmarking"
     phase === SessionProfiling && return "Profiling"
     phase === SessionInspecting && return "Inspecting"
     phase === SessionDebugging && return "Debugging"

@@ -47,8 +47,8 @@ SessionCreated → SessionStarting → SessionActivatingEnv → SessionIdle
                                         │
                      ┌──────────────────┴──────────────────┐
                      ▼                                     │
-   SessionEvaluating / SessionRevising / SessionBenchmarking│
-   SessionProfiling / SessionInspecting / SessionDebugging  │
+   SessionEvaluating / SessionRevising / SessionProfiling   │
+   SessionInspecting / SessionDebugging                     │
                      │                                     │
                      ├──────────► SessionIdle ─────────────┘
                      ▼
@@ -142,13 +142,9 @@ Two dependencies do not fit that pattern:
 - **Compiler**, needed by LoweredCodeUtils on Julia 1.10+, is a 21-line re-export shim.
   Upstream only tags releases that vendor the whole compiler pinned to a single Julia
   version, so the shim is carried as first-party source in `compiler_shim.jl`.
-- **BenchmarkTools** has no `packagedef.jl` and resolves its own dependencies with `using`,
-  so it cannot be `include`d into an ad-hoc module. Instead
-  `scripts/update_app_environments.jl` develops the vendored copy — with Compat, JSON,
-  PrecompileTools and Preferences — into the version-specific environments for Julia 1.6
-  and newer, and the server loads it with `Base.require`. Because that happens at runtime,
-  every call into BenchmarkTools must be made from inside the `invokelatest`'d backend
-  closure and reduced to plain data there, or it hits a world-age error.
+- Packages without a `packagedef.jl` that resolve their own dependencies with `using`
+  cannot be `include`d into an ad-hoc module at all. Adding one means either patching it or
+  developing it into the version-specific environments as a real package.
 
 ## Version-specific environments
 

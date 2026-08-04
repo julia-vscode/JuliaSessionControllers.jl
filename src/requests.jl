@@ -16,22 +16,6 @@ function _from_wire(w::Protocol.EvalResult)
     )
 end
 
-function _from_wire(w::Protocol.BenchmarkResult)
-    return BenchmarkResult(
-        Symbol(w.status),
-        coalesce(w.error, nothing),
-        coalesce(w.minTime, nothing),
-        coalesce(w.medianTime, nothing),
-        coalesce(w.meanTime, nothing),
-        coalesce(w.maxTime, nothing),
-        coalesce(w.allocs, nothing),
-        coalesce(w.memory, nothing),
-        coalesce(w.nsamples, nothing),
-        coalesce(w.evalsPerSample, nothing),
-        coalesce(w.summary, nothing),
-    )
-end
-
 function _from_wire(f::Protocol.ProfileFrame)
     return ProfileFrame(
         f.func,
@@ -176,54 +160,6 @@ function activate_env(
         token=token,
     )
     return _submit(c, session_id, req)::String
-end
-
-"""
-    benchmark(controller, session_id, code; kwargs...) -> BenchmarkResult
-
-Benchmark `code` with BenchmarkTools. On a Julia version older than the vendored
-BenchmarkTools supports, the result comes back with `status === :unsupported` rather than
-failing.
-
-# Keyword arguments
-- `seconds`, `samples`, `evals` — passed through to `BenchmarkTools`.
-- `mod`, `filename`, `line` — evaluation context, as for [`evaluate`](@ref).
-"""
-function benchmark(
-    c::JuliaSessionsController,
-    session_id::AbstractString,
-    code::AbstractString;
-    seconds::Union{Nothing,Real}=nothing,
-    samples::Union{Nothing,Integer}=nothing,
-    evals::Union{Nothing,Integer}=nothing,
-    mod::AbstractString="Main",
-    filename::AbstractString="",
-    line::Integer=1,
-    timeout::Union{Nothing,Real}=nothing,
-    token::Union{Nothing,CancellationTokens.CancellationToken}=nothing,
-)
-    request_id = string(UUIDs.uuid4())
-    params = Protocol.BenchmarkParams(
-        requestId=request_id,
-        code=String(code),
-        filename=String(filename),
-        line=Int(line),
-        mod=String(mod),
-        seconds=seconds === nothing ? missing : Float64(seconds),
-        samples=samples === nothing ? missing : Int(samples),
-        evals=evals === nothing ? missing : Int(evals),
-    )
-
-    req = PendingRequest(
-        :benchmark,
-        SessionBenchmarking,
-        endpoint -> JSONRPC.send(endpoint, Protocol.benchmark_request_type, params);
-        convert_result=_from_wire,
-        timeout=timeout,
-        token=token,
-        id=request_id,
-    )
-    return _submit(c, session_id, req)::BenchmarkResult
 end
 
 """

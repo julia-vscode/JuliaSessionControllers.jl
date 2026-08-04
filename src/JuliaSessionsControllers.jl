@@ -16,12 +16,12 @@ end
 
 export JuliaSessionsController
 export SessionEnvironment, ControllerCallbacks
-export SessionInfo, EvalResult, BenchmarkResult, ProfileResult, ProfileFrame
+export SessionInfo, EvalResult, ProfileResult, ProfileFrame
 export WorkspaceVariable, CompletionItem, StackFrame
 export SessionNotFoundException, SessionDiedException, SessionStartupFailedException
 export RequestTimeoutException, RequestInterruptedException
 export create_session, terminate_session, interrupt_session, list_sessions
-export evaluate, revise!, activate_env, benchmark, profile
+export evaluate, revise!, activate_env, profile
 export get_variables, get_lazy, get_completions, get_modules, start_debug_session
 export shutdown, wait_for_shutdown
 

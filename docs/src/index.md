@@ -84,6 +84,5 @@ task running user code, then `SIGINT`, then killing the process.
 ## Julia version support
 
 Session processes run on Julia 1.0 and newer, independently of the Julia running the
-controller. Benchmarking requires Julia 1.6 or newer and allocation profiling Julia 1.8 or
-newer; below those versions the corresponding request reports `status === :unsupported`
-rather than failing.
+controller. Allocation profiling requires Julia 1.8 or newer; below that the request
+reports `status === :unsupported` rather than failing.

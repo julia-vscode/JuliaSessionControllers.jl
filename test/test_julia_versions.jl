@@ -47,29 +47,6 @@ end
     end
 end
 
-@testitem "benchmarking degrades rather than fails on old Julia" setup=[SessionHelpers] tags=[:comprehensive_platform] begin
-    using .SessionHelpers
-
-    for version in SessionHelpers.installed_julia_versions()
-        env = SessionEnvironment(julia_cmd="julia", julia_args=["+$version"])
-
-        @testset "Julia $version" begin
-            SessionHelpers.with_session(env) do ctrl, sid
-                result = benchmark(ctrl, sid, "sum(1:100)"; seconds=1)
-
-                if VersionNumber(version) < v"1.6"
-                    # BenchmarkTools is not developed into these environments.
-                    @test result.status === :unsupported
-                    @test result.error !== nothing
-                else
-                    @test result.status === :success
-                    @test result.min_time > 0
-                end
-            end
-        end
-    end
-end
-
 @testitem "allocation profiling degrades rather than fails on old Julia" setup=[SessionHelpers] tags=[:comprehensive_platform] begin
     using .SessionHelpers
 

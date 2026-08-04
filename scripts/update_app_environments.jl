@@ -13,22 +13,9 @@ const JULIA_VERSIONS = [
     "1.8", "1.9", "1.10", "1.11", "1.12", "1.13",
 ]
 
-# BenchmarkTools cannot be `include`d like the other vendored packages, so it is developed
-# into the environment as a real package instead — only where the vendored release runs.
-const BENCHMARKTOOLS_MIN_JULIA = v"1.6"
-const BENCHMARKTOOLS_STACK = ["BenchmarkTools", "Compat", "JSON", "PrecompileTools", "Preferences"]
-
 environments_dir() = normpath(joinpath(REPO_ROOT, "sessionprocess", "environments"))
 
-function develop_specs(julia_version::VersionNumber)
-    specs = ["PackageSpec(path=\"../../JuliaSessionServer\")"]
-    if julia_version >= BENCHMARKTOOLS_MIN_JULIA
-        for pkg in BENCHMARKTOOLS_STACK
-            push!(specs, "PackageSpec(path=\"../../../packages/$pkg\")")
-        end
-    end
-    return "using Pkg; Pkg.develop([" * join(specs, ", ") * "])"
-end
+develop_command() = "using Pkg; Pkg.develop(PackageSpec(path=\"../../JuliaSessionServer\"))"
 
 """
 Julia 1.0 and 1.1 write Windows path separators into the manifest, which then fails to
@@ -44,9 +31,8 @@ function build_environment(version::AbstractString, julia_spec::AbstractString)
     path = joinpath(environments_dir(), version == "fallback" ? "fallback" : "v$version")
     mkpath(path)
 
-    julia_version = version == "fallback" ? VersionNumber(string(VERSION.major, '.', VERSION.minor)) : VersionNumber(version)
     @info "Building session process environment" version path
-    run(Cmd(`julia +$julia_spec --project=. -e $(develop_specs(julia_version))`, dir=path))
+    run(Cmd(`julia +$julia_spec --project=. -e $(develop_command())`, dir=path))
 
     version in ("1.0", "1.1") && normalize_manifest_separators(version)
     return nothing

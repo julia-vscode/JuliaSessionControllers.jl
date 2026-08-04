@@ -2,7 +2,7 @@
 
 julia_version = "1.13.0-rc1"
 manifest_format = "2.1"
-project_hash = "6fde34aa01b749234034249e3d47fc9a26d7f827"
+project_hash = "df3fc648bdd22d1bfd4f93099f966de318936513"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -15,22 +15,6 @@ version = "1.11.0"
 [[deps.Base64]]
 uuid = "2a0f44e3-6c83-55bd-87e4-b1978d98bd5f"
 version = "1.11.0"
-
-[[deps.BenchmarkTools]]
-deps = ["Compat", "JSON", "Logging", "PrecompileTools", "Printf", "Profile", "Statistics", "UUIDs"]
-path = "../../../packages/BenchmarkTools"
-uuid = "6e4b80f9-dd63-53aa-95a3-0cdb28fa8baf"
-version = "1.8.0"
-
-[[deps.Compat]]
-deps = ["TOML", "UUIDs"]
-path = "../../../packages/Compat"
-uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.18.1"
-weakdeps = ["Dates", "LinearAlgebra"]
-
-    [deps.Compat.extensions]
-    CompatLinearAlgebraExt = "LinearAlgebra"
 
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -61,14 +45,8 @@ deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
 version = "1.11.0"
 
-[[deps.JSON]]
-deps = ["Dates", "Mmap", "Unicode"]
-path = "../../../packages/JSON"
-uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
-version = "0.20.1"
-
 [[deps.JuliaSessionServer]]
-deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "Statistics", "TOML", "UUIDs", "Unicode"]
+deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "TOML", "UUIDs", "Unicode"]
 path = "../../JuliaSessionServer"
 uuid = "0e2b7b1a-6c34-4f1e-9d3e-2b8a5f7c4d61"
 version = "1.0.0"
@@ -107,11 +85,6 @@ version = "1.11.3+1"
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
 version = "1.11.0"
 
-[[deps.LinearAlgebra]]
-deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
-uuid = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
-version = "1.13.0"
-
 [[deps.Logging]]
 uuid = "56ddb016-857b-54e1-b83d-db4d58db5568"
 version = "1.11.0"
@@ -133,11 +106,6 @@ version = "2025.12.2"
 uuid = "ca575930-c2e3-43a9-ace4-1e988b2c1908"
 version = "1.3.0"
 
-[[deps.OpenBLAS_jll]]
-deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
-uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.30+0"
-
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "458c3c95-2e84-50aa-8efc-19380b2a3a95"
@@ -156,18 +124,6 @@ weakdeps = ["REPL"]
 
     [deps.Pkg.extensions]
     REPLExt = "REPL"
-
-[[deps.PrecompileTools]]
-deps = ["Preferences"]
-path = "../../../packages/PrecompileTools"
-uuid = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
-version = "1.2.1"
-
-[[deps.Preferences]]
-deps = ["TOML"]
-path = "../../../packages/Preferences"
-uuid = "21216c6a-2e73-6563-6e65-726566657250"
-version = "1.5.2"
 
 [[deps.Printf]]
 deps = ["Unicode"]
@@ -200,19 +156,6 @@ version = "1.11.0"
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 version = "1.11.0"
-
-[[deps.Statistics]]
-deps = ["LinearAlgebra"]
-git-tree-sha1 = "ae3bb1eb3bba077cd276bc5cfc337cc65c3075c0"
-registries = "General"
-uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.11.1"
-
-    [deps.Statistics.extensions]
-    SparseArraysExt = ["SparseArrays"]
-
-    [deps.Statistics.weakdeps]
-    SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [[deps.StyledStrings]]
 uuid = "f489334b-da3d-4c2e-b8f0-e476e12c162b"
@@ -247,11 +190,6 @@ deps = ["CompilerSupportLibraries_jll", "Libdl"]
 uuid = "3161d3a3-bdf6-5164-811a-617609db77b4"
 version = "1.5.7+1"
 
-[[deps.libblastrampoline_jll]]
-deps = ["Artifacts", "Libdl"]
-uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.15.0+0"
-
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
@@ -261,7 +199,3 @@ version = "1.67.1+0"
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
 version = "17.7.0+0"
-
-[registries.General]
-url = "https://github.com/JuliaRegistries/General.git"
-uuid = "23338594-aafe-5451-b93e-139f81909106"
