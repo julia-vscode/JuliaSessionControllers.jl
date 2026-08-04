@@ -19,7 +19,9 @@ end
 
 function eval_one(mod::Module, ex, lnn, softscope::Bool)
     ex = softscope ? apply_softscope(ex) : ex
-    return Core.eval(mod, lnn === nothing ? ex : Expr(:block, lnn, ex))
+    # `:toplevel` rather than `:block`, because `module` and `using` are only legal at top
+    # level — wrapping them in a block makes them fail.
+    return Core.eval(mod, lnn === nothing ? ex : Expr(:toplevel, lnn, ex))
 end
 
 """

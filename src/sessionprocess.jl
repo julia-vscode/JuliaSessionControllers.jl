@@ -53,28 +53,30 @@ function demux!(d::OutputDemux, chunk::AbstractString)
     end
 
     while i <= n
-        in_request = d.current_request_id !== nothing
-        marker = in_request ? OUTPUT_END_MARKER : OUTPUT_BEGIN_MARKER
-        m = match_marker(buf, i, marker)
+        begin_match = match_marker(buf, i, OUTPUT_BEGIN_MARKER)
+        end_match = match_marker(buf, i, OUTPUT_END_MARKER)
 
         # A truncated marker is indistinguishable from ordinary text until more arrives.
-        m === :partial && break
+        (begin_match === :partial || end_match === :partial) && break
 
-        if m === :full
-            if in_request
-                flush_pending!()
-                d.current_request_id = nothing
-                pending_id = nothing
-                i += ncodeunits(OUTPUT_END_MARKER)
-            else
-                id_start = i + ncodeunits(OUTPUT_BEGIN_MARKER)
-                terminator = id_start > n ? nothing : findnext(isequal('"'), buf, id_start)
-                terminator === nothing && break
-                flush_pending!()
-                d.current_request_id = String(SubString(buf, id_start, prevind(buf, terminator)))
-                pending_id = d.current_request_id
-                i = nextind(buf, terminator)
-            end
+        if begin_match === :full
+            id_start = i + ncodeunits(OUTPUT_BEGIN_MARKER)
+            terminator = id_start > n ? nothing : findnext(isequal('"'), buf, id_start)
+            terminator === nothing && break
+            flush_pending!()
+            d.current_request_id = String(SubString(buf, id_start, prevind(buf, terminator)))
+            pending_id = d.current_request_id
+            i = nextind(buf, terminator)
+            continue
+        end
+
+        if end_match === :full
+            # Also swallowed when no request is open: an interrupt can land between a
+            # request starting and its begin marker being written.
+            flush_pending!()
+            d.current_request_id = nothing
+            pending_id = nothing
+            i += ncodeunits(OUTPUT_END_MARKER)
             continue
         end
 

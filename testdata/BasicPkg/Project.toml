@@ -1,0 +1,6 @@
+name = "BasicPkg"
+uuid = "b19a1c2f-3d4e-4a5b-8c6d-7e8f9a0b1c2d"
+version = "0.1.0"
+
+[compat]
+julia = "1"

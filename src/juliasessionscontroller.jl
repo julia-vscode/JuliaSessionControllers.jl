@@ -6,6 +6,12 @@ const INTERRUPT_SIGINT_GRACE_SECONDS = 2.0
 const INTERRUPT_KILL_GRACE_SECONDS = 5.0
 
 """
+How long to wait for a process exit to be observed after a request's connection drops,
+before giving up and failing the request without exit details.
+"""
+const TRANSPORT_ERROR_GRACE_SECONDS = 10.0
+
+"""
     JuliaSessionsController(callbacks; kwargs...)
 
 Manages Julia child processes in which arbitrary code can be evaluated.
@@ -191,12 +197,6 @@ function _pump_queue!(c::JuliaSessionsController, ss::SessionState)
     if req.timeout !== nothing
         req.timeout_timer = Timer(req.timeout) do _
             try put!(c.reactor_channel, RequestTimeoutMsg(ss.id, req.id)) catch end
-        end
-    end
-
-    if req.token !== nothing
-        req.token_registration = CancellationTokens.register(req.token) do
-            try put!(c.reactor_channel, CancelRequestMsg(ss.id, req.id)) catch end
         end
     end
 
@@ -409,6 +409,15 @@ function handle!(c::JuliaSessionsController, msg::SubmitRequestMsg)
     end
 
     push!(ss.request_queue, msg.request)
+
+    # Registered on submission rather than on start, so that a request can be cancelled
+    # while it is still queued and never reach the session at all.
+    if msg.request.token !== nothing
+        msg.request.token_registration = CancellationTokens.register(msg.request.token) do
+            try put!(c.reactor_channel, CancelRequestMsg(ss.id, msg.request.id)) catch end
+        end
+    end
+
     _pump_queue!(c, ss)
     return false
 end
@@ -420,6 +429,16 @@ function handle!(c::JuliaSessionsController, msg::RequestCompletedMsg)
     cur = ss.current_request
     if cur === nothing || cur.id != msg.request_id
         @debug "Ignoring result for a request that is no longer current" session_id = msg.session_id request_id = msg.request_id
+        return false
+    end
+
+    # A dropped connection means the process is on its way out. Hold the request open so it
+    # can be failed with the real exit code and output once the exit is observed.
+    if msg.is_error && msg.result isa JSONRPC.TransportError
+        @debug "Request connection dropped, waiting for the session to exit" session_id = ss.id request_id = cur.id
+        cur.timeout_timer = Timer(TRANSPORT_ERROR_GRACE_SECONDS) do _
+            complete_request!(cur, died_exception(ss))
+        end
         return false
     end
 
