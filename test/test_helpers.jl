@@ -58,4 +58,32 @@ function captured_exception(task::Task)
     end
 end
 
+"""
+The `X.Y` juliaup channels that have a matching session process environment, so that the
+cross-version tests only cover versions this checkout can actually serve.
+"""
+function installed_julia_versions()
+    environments = normpath(joinpath(@__DIR__, "..", "sessionprocess", "environments"))
+    available = Set(
+        chop(name, head=1, tail=0)
+        for name in readdir(environments)
+        if startswith(name, "v")
+    )
+
+    status = try
+        read(`juliaup status`, String)
+    catch err
+        @warn "juliaup is not available; skipping cross-version coverage" exception = (err,)
+        return String[]
+    end
+
+    channels = String[]
+    for m in eachmatch(r"(?m)^\s*\*?\s*(\d+\.\d+)\s+\d", status)
+        channel = m[1]
+        channel in available && push!(channels, channel)
+    end
+
+    return sort!(unique!(channels), by=VersionNumber)
+end
+
 end
