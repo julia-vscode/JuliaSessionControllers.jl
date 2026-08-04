@@ -23,6 +23,7 @@ const CURRENT_SUBTREES = [
     "packages/JuliaInterpreter"   => ("JuliaDebug/JuliaInterpreter.jl", "v0.10.12"),
     "packages/LoweredCodeUtils"   => ("JuliaDebug/LoweredCodeUtils.jl", "v3.5.1"),
     "packages/OrderedCollections" => ("JuliaCollections/OrderedCollections.jl", "v1.8.1"),
+    "packages/PrecompileTools"    => ("JuliaLang/PrecompileTools.jl", "v1.3.4"),
     "packages/Preferences"        => ("JuliaPackaging/Preferences.jl", "v1.5.2"),
     "packages/Revise"             => ("timholy/Revise.jl", "v3.14.4"),
     "packages/TestEnv"            => ("JuliaTesting/TestEnv.jl", "v1.103.6"),
