@@ -23,7 +23,8 @@ const CURRENT_SUBTREES = [
     "packages/JuliaInterpreter"   => ("JuliaDebug/JuliaInterpreter.jl", "v0.10.12"),
     "packages/LoweredCodeUtils"   => ("JuliaDebug/LoweredCodeUtils.jl", "v3.5.1"),
     "packages/OrderedCollections" => ("JuliaCollections/OrderedCollections.jl", "v1.8.1"),
-    "packages/PrecompileTools"    => ("JuliaLang/PrecompileTools.jl", "v1.3.4"),
+    # Pinned: PrecompileTools 1.3+ requires Julia 1.12, but session processes run on 1.0+.
+    "packages/PrecompileTools"    => ("JuliaLang/PrecompileTools.jl", "v1.2.1"),
     "packages/Preferences"        => ("JuliaPackaging/Preferences.jl", "v1.5.2"),
     "packages/Revise"             => ("timholy/Revise.jl", "v3.14.4"),
     "packages/TestEnv"            => ("JuliaTesting/TestEnv.jl", "v1.103.6"),
@@ -53,6 +54,7 @@ Packages deliberately excluded from automated updates, with the reason why.
 """
 const UPDATE_EXCLUSIONS = Dict(
     "packages/JSON" => "Newer JSON versions add dependencies we would have to vendor too.",
+    "packages/PrecompileTools" => "Newer versions require Julia 1.12; session processes run on 1.0+.",
 )
 
 git(args...; dir=REPO_ROOT) = run(addenv(Cmd(`git $(collect(args))`, dir=dir), "GIT_MERGE_AUTOEDIT" => "no"))
