@@ -70,9 +70,9 @@ function remote_tags(location::AbstractString)
     return versions
 end
 
-vendored_version(prefix) = VersionNumber(
-    something(
-        match(r"(?m)^version\s*=\s*\"([^\"]+)\"", read(joinpath(REPO_ROOT, prefix, "Project.toml"), String)),
-        error("No version found in $prefix/Project.toml"),
-    )[1]
-)
+function vendored_version(prefix)
+    content = read(joinpath(REPO_ROOT, prefix, "Project.toml"), String)
+    m = match(r"(?m)^version\s*=\s*\"([^\"]+)\"", content)
+    m === nothing && error("No version found in $prefix/Project.toml")
+    return VersionNumber(m[1])
+end
