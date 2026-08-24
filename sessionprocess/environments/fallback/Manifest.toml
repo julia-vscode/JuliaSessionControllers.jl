@@ -25,6 +25,13 @@ version = "1.11.0"
     [deps.Base64.syntax]
     julia_version = "1.14.0-DEV"
 
+[[deps.CRC32c]]
+uuid = "8bf52ea8-c179-5cab-976a-9e18b702a9bc"
+version = "1.11.0"
+
+    [deps.CRC32c.syntax]
+    julia_version = "1.14.0-DEV"
+
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
@@ -73,7 +80,7 @@ version = "1.11.0"
     julia_version = "1.14.0-DEV"
 
 [[deps.JuliaSessionServer]]
-deps = ["Base64", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "TOML", "UUIDs", "Unicode"]
+deps = ["Base64", "CRC32c", "Dates", "Distributed", "FileWatching", "InteractiveUtils", "LibGit2", "Logging", "Mmap", "Pkg", "Printf", "Profile", "REPL", "Random", "Sockets", "TOML", "UUIDs", "Unicode"]
 path = "../../JuliaSessionServer"
 uuid = "0e2b7b1a-6c34-4f1e-9d3e-2b8a5f7c4d61"
 version = "1.0.0"
