@@ -97,7 +97,7 @@ mutable struct SessionState
     cs::CancellationTokens.CancellationTokenSource
     process_tasks::Vector{Task}
 
-    # Drives the notification → SIGINT → kill escalation of `interrupt_session`.
+    # Drives the notification → kill escalation of `interrupt_session`.
     interrupt_timer::Union{Nothing,Timer}
     interrupt_step::Int
 

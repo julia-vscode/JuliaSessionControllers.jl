@@ -78,6 +78,7 @@ function serve(pipename, error_handler=nothing)
             println(stderr, "^C")
             interrupt_backend()
         else
+            request_accepted!()
             @async try
                 dispatch_msg(endpoint, msg, state)
             catch err
@@ -85,6 +86,8 @@ function serve(pipename, error_handler=nothing)
                 error_handler === nothing || Base.invokelatest(error_handler, err, bt)
                 @error "The session server failed to dispatch a message." exception = (err, bt)
                 exit(1)
+            finally
+                request_finished!()
             end
         end
     end
