@@ -1,9 +1,18 @@
 """Grace period before a shutdown request is escalated to killing the process."""
 const SHUTDOWN_GRACE_SECONDS = 5.0
 
-"""Grace periods for the interrupt escalation ladder: notification → SIGINT → kill."""
-const INTERRUPT_SIGINT_GRACE_SECONDS = 2.0
-const INTERRUPT_KILL_GRACE_SECONDS = 5.0
+"""
+How long the cooperative interrupt gets before the session is killed.
+
+The ladder is notification → kill, with no SIGINT rung in between. SIGINT would deliver the
+same `InterruptException` the notification already delivers, but to whichever task happens to
+be running rather than to the backend — and an interrupt landing on the JSONRPC transport
+permanently poisons the endpoint. It bought nothing over the kill that follows it.
+
+Generous, because this is now the only thing standing between a timeout and a killed session,
+and the round trip has to unwind the backend, cross two channels and reach the reactor.
+"""
+const INTERRUPT_KILL_GRACE_SECONDS = 10.0
 
 """
 How long to wait for a process exit to be observed after a request's connection drops,
@@ -526,7 +535,7 @@ function _begin_interrupt!(c::JuliaSessionController, ss::SessionState)
         end
     end
 
-    _arm_interrupt_timer!(c, ss, 1, INTERRUPT_SIGINT_GRACE_SECONDS)
+    _arm_interrupt_timer!(c, ss, 1, INTERRUPT_KILL_GRACE_SECONDS)
     return nothing
 end
 
@@ -536,19 +545,8 @@ function handle!(c::JuliaSessionController, msg::InterruptEscalationMsg)
     state(ss.fsm) === SessionInterrupting || return false
     ss.interrupt_step == msg.step || return false
 
-    if msg.step == 1
-        # SIGINT is not available on Windows, so there the ladder goes straight to a kill.
-        if !Sys.iswindows() && ss.jl_process !== nothing
-            @debug "Escalating interrupt to SIGINT" session_id = ss.id
-            try kill(ss.jl_process, Base.SIGINT) catch end
-            _arm_interrupt_timer!(c, ss, 2, INTERRUPT_KILL_GRACE_SECONDS)
-        else
-            _arm_interrupt_timer!(c, ss, 2, INTERRUPT_KILL_GRACE_SECONDS)
-        end
-    else
-        @warn "Session did not respond to interrupt, killing it" session_id = ss.id
-        try CancellationTokens.cancel(ss.cs) catch end
-    end
+    @warn "Session did not respond to interrupt, killing it" session_id = ss.id
+    try CancellationTokens.cancel(ss.cs) catch end
     return false
 end
 

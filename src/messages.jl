@@ -54,7 +54,7 @@ struct InterruptSessionMsg <: ReactorMessage
     session_id::String
 end
 
-# Drives the interrupt escalation ladder: step 1 sends SIGINT, step 2 kills the process.
+# Fires when the cooperative interrupt's grace period runs out and the session must be killed.
 struct InterruptEscalationMsg <: ReactorMessage
     session_id::String
     step::Int
